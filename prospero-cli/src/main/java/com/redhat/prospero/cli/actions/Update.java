@@ -47,12 +47,11 @@ public class Update {
    }
 
    public static void main(String[] args) throws Exception {
-      if (args.length < 2) {
-         System.out.println("Not enough parameters. Need to provide WFLY installation and repository folders.");
+      if (args.length < 1) {
+         System.out.println("Not enough parameters. Need to provide WFLY installation.");
          return;
       }
       final String base = args[0];
-      final String repo = args[1];
       final String artifact;
       if (args.length == 3) {
          // TODO: take multiple artifacts
@@ -62,8 +61,9 @@ public class Update {
       }
 
 //      Repository repository = new LocalRepository(Paths.get(repo));
-      Repository repository = new MavenRepository();
+      Repository repository = new MavenRepository("dev", "http://localhost:8081/repository/dev");
       LocalInstallation localInstallation = new LocalInstallation(Paths.get(base));
+      localInstallation.getManifest().getChannels();
       if (artifact == null) {
          new Update(repository, localInstallation).doUpdateAll();
       } else {

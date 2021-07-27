@@ -61,12 +61,17 @@ import org.jboss.galleon.universe.maven.repo.MavenArtifactVersion;
 
 public class ProsperoArtifactResolver {
 
+   private final String channel;
    private RepositorySystem repoSystem;
    private RepositorySystemSession repoSession;
    private Map<String, String> artifactStreams;
+   private Map<String, String> resolvedArtifactStreams = new HashMap<>();
 
-   public ProsperoArtifactResolver(Path streamsPath) throws ProvisioningException {
+   public ProsperoArtifactResolver(Path streamsPath, String channel) throws ProvisioningException {
       System.out.println("Using ProsperoResolver");
+
+      this.channel = channel;
+
       try {
          repoSystem = newRepositorySystem();
          repoSession = newRepositorySystemSession(repoSystem);
@@ -81,15 +86,23 @@ public class ProsperoArtifactResolver {
       }
    }
 
-   public static void writeManifestFile(ProvisioningRuntime runtime, Map<String, String> mergedArtifactVersions) throws MavenUniverseException {
+   public void writeManifestFile(ProvisioningRuntime runtime, Map<String, String> mergedArtifactVersions, String channelName) throws MavenUniverseException {
       final File file = runtime.getStagedDir().resolve("manifest.xml").toFile();
       try (final FileWriter fileWriter = new FileWriter(file)) {
          fileWriter.write("<manifest>\n");
-         for (String str : mergedArtifactVersions.values()) {
-            final MavenArtifact artifact = MavenArtifact.fromString(str);
-            // TODO: why is the version read as extension??
+         fileWriter.write("<channels>\n");
+//         for (String channelName: channels.keySet()) {
+            fileWriter.write(String.format("<channel name=\"%s\" url=\"%s\"/>%n", channelName, "http://localhost:8081/repository/" + channelName));
+//         }
+         fileWriter.write("</channels>\n");
+         for (Map.Entry<String, String> entry : mergedArtifactVersions.entrySet()) {
+            final MavenArtifact artifact = MavenArtifact.fromString(entry.getValue());
+            String version = artifact.getExtension(); // something's messed up here?
+            if (resolvedArtifactStreams.containsKey(entry.getKey())) {
+               version = resolvedArtifactStreams.get(entry.getKey());
+            }
             fileWriter.write(String.format("<artifact package=\"%s\" name=\"%s\" version=\"%s\" classifier=\"\"/>%n",
-                                           artifact.getGroupId(), artifact.getArtifactId(), artifact.getExtension()));
+                                           artifact.getGroupId(), artifact.getArtifactId(), version));
 
          }
          fileWriter.write("</manifest>\n");
@@ -104,6 +117,7 @@ public class ProsperoArtifactResolver {
       }
 
       final String latestVersion = doGetHighestVersion(artifact, null, null, null);
+      resolvedArtifactStreams.put(artifact.getGroupId() + ":" + artifact.getArtifactId(), latestVersion);
 
       final ArtifactRequest request = new ArtifactRequest();
       request.setArtifact(new DefaultArtifact(artifact.getGroupId(), artifact.getArtifactId(), artifact.getClassifier(),
@@ -122,7 +136,13 @@ public class ProsperoArtifactResolver {
       if (result.isMissing()) {
          throw new MavenUniverseException("Repository is missing artifact " + request.getArtifact().toString());
       }
+      artifact.setVersion(result.getArtifact().getVersion());
       artifact.setPath(Paths.get(result.getArtifact().getFile().toURI()));
+   }
+
+   public boolean isStream(MavenArtifact mavenArtifact) {
+      final String artifactStreamId = mavenArtifact.getGroupId() + ":" + mavenArtifact.getArtifactId();
+      return artifactStreams.containsKey(artifactStreamId);
    }
 
    private String doGetHighestVersion(MavenArtifact mavenArtifact, String lowestQualifier, Pattern includeVersion, Pattern excludeVersion) throws MavenUniverseException {
@@ -134,7 +154,7 @@ public class ProsperoArtifactResolver {
          if (latest == null) {
             throw new MavenLatestVersionNotAvailableException(MavenErrors.failedToResolveLatestVersion(mavenArtifact.getCoordsAsString()));
          }
-         System.out.println(mavenArtifact.toString() + " == " + latest);
+         System.out.println(streamDef.toString() + " == " + latest);
          return latest.toString();
       } else {
          return mavenArtifact.getVersion();
@@ -156,7 +176,7 @@ public class ProsperoArtifactResolver {
 
    private List<RemoteRepository> getRepositories() {
       final ArrayList<RemoteRepository> repos = new ArrayList<>();
-      RemoteRepository channelRepo = new RemoteRepository.Builder("channel", "default", "http://localhost:8081/repository/dev/")
+      RemoteRepository channelRepo = new RemoteRepository.Builder(channel, "default", "http://localhost:8081/repository/" + channel)
          .setReleasePolicy(new RepositoryPolicy(true, RepositoryPolicy.UPDATE_POLICY_ALWAYS, null))
          .setSnapshotPolicy(new RepositoryPolicy(true, RepositoryPolicy.UPDATE_POLICY_ALWAYS, null))
          .build();

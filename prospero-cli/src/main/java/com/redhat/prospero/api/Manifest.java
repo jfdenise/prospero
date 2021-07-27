@@ -19,7 +19,9 @@ package com.redhat.prospero.api;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.redhat.prospero.xml.ManifestXmlSupport;
 import com.redhat.prospero.xml.XmlException;
@@ -28,11 +30,13 @@ public class Manifest {
 
    private final List<Artifact> artifacts;
    private final Path manifestFile;
+   private final Map<String, String> channels;
    private final List<Package> packages;
 
-   public Manifest(List<Artifact> artifacts, List<Package> packages, Path manifestFile) {
+   public Manifest(List<Artifact> artifacts, List<Package> packages, Map<String, String> channels, Path manifestFile) {
       this.artifacts = artifacts;
       this.packages = packages;
+      this.channels = channels;
       this.manifestFile = manifestFile;
    }
 
@@ -78,5 +82,9 @@ public class Manifest {
          }
       }
       return null;
+   }
+
+   public Map<String, String> getChannels() {
+      return channels;
    }
 }

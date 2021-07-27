@@ -101,12 +101,32 @@
             <groupId>org.jboss.galleon</groupId>
             <artifactId>galleon-maven-universe</artifactId>
             <version>4.2.8.Final</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.aether</groupId>
+                    <artifactId>aether-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.aether</groupId>
+                    <artifactId>aether-util</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.galleon</groupId>
             <artifactId>galleon-maven-plugin</artifactId>
             <version>4.2.8.Final</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.aether</groupId>
+                    <artifactId>aether-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.aether</groupId>
+                    <artifactId>aether-util</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

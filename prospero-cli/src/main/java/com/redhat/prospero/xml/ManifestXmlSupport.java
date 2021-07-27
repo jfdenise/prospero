@@ -24,6 +24,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.redhat.prospero.api.Artifact;
 import com.redhat.prospero.api.Package;
@@ -58,6 +60,12 @@ public class ManifestXmlSupport extends XmlSupport {
       try {
          final PrintWriter printWriter = new PrintWriter(manifestFile);
          printWriter.println("<manifest>");
+         // add channels
+         printWriter.write("<channels>\n");
+         for (Map.Entry<String, String> channel: manifest.getChannels().entrySet()) {
+            printWriter.write(String.format("<channel name=\"%s\" url=\"%s\"/>%n", channel.getKey(), "http://localhost:8081/repository/" + channel.getValue()));
+         }
+         printWriter.write("</channels>\n");
          // add packages
          for (Package aPackage : manifest.getPackages()) {
             printWriter.println(String.format("<package group=\"%s\" name=\"%s\" version=\"%s\"/>",
@@ -88,8 +96,19 @@ public class ManifestXmlSupport extends XmlSupport {
 
       final ArrayList<Artifact> entries = parseArtifacts(input);
       final ArrayList<Package> packages = parsePackages(input);
-      final Manifest manifest = new Manifest(entries, packages, manifestFile.toPath());
+      final Map<String, String> channels = parseChannels(input);
+      final Manifest manifest = new Manifest(entries, packages, channels, manifestFile.toPath());
       return manifest;
+   }
+
+   private Map<String, String> parseChannels(Document input) throws XmlException {
+      Map<String, String> channels = new HashMap<>();
+      NodeList nodes = nodesFromXPath(input, "//channels/channel");
+      for (int i = 0; i < nodes.getLength(); i++) {
+         Element node = (Element) nodes.item(i);
+         channels.put(node.getAttribute("name"), node.getAttribute("url"));
+      }
+      return channels;
    }
 
    private ArrayList<Artifact> parseArtifacts(Document input) throws XmlException {

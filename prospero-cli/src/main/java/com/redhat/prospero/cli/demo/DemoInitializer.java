@@ -24,7 +24,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -158,7 +160,9 @@ public class DemoInitializer {
             return new Artifact(coords[0], coords[1], coords[2], coords.length==4?coords[3]:"");
          }).collect(Collectors.toList());
 
-      Manifest manifest = new Manifest(artifacts, packages, manifestPath);
+      Map<String, String> channels = new HashMap<>();
+      channels.put("dev", "http://localhost:8081/repository/dev");
+      Manifest manifest = new Manifest(artifacts, packages, channels, manifestPath);
       ManifestXmlSupport.write(manifest, manifestPath.toFile());
    }
 
