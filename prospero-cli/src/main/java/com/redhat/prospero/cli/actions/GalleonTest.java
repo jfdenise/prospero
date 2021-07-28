@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.redhat.prospero.api.Channel;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -68,10 +69,12 @@ public class GalleonTest {
          return;
       }
       final String base = args[0];
-      installCore(base);
+      final String channelsFile = args[1];
+
+      installCore(base, channelsFile);
    }
 
-   public static void installCore(String path) throws ProvisioningException, IOException {
+   public static void installCore(String path, String channelsFile) throws ProvisioningException, IOException {
       ProvisioningManager.Builder builder = ProvisioningManager.builder();
       builder.setLayoutFactory(getLayoutFactory());
       builder.setInstallationHome(Paths.get(path));
@@ -83,8 +86,7 @@ public class GalleonTest {
 
       Map<String, String> params = new HashMap<>();
       params.put("use-prospero", "true");
-      params.put("prospero-channel", "dev");
-
+      params.put("prospero-channels-file", channelsFile);
       provMgr.install(loc, params);
    }
 

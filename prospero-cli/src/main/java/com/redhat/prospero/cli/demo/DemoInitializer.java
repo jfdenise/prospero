@@ -160,9 +160,7 @@ public class DemoInitializer {
             return new Artifact(coords[0], coords[1], coords[2], coords.length==4?coords[3]:"");
          }).collect(Collectors.toList());
 
-      Map<String, String> channels = new HashMap<>();
-      channels.put("dev", "http://localhost:8081/repository/dev");
-      Manifest manifest = new Manifest(artifacts, packages, channels, manifestPath);
+      Manifest manifest = new Manifest(artifacts, packages, manifestPath);
       ManifestXmlSupport.write(manifest, manifestPath.toFile());
    }
 

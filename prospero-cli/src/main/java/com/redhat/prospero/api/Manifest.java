@@ -30,13 +30,11 @@ public class Manifest {
 
    private final List<Artifact> artifacts;
    private final Path manifestFile;
-   private final Map<String, String> channels;
    private final List<Package> packages;
 
-   public Manifest(List<Artifact> artifacts, List<Package> packages, Map<String, String> channels, Path manifestFile) {
+   public Manifest(List<Artifact> artifacts, List<Package> packages, Path manifestFile) {
       this.artifacts = artifacts;
       this.packages = packages;
-      this.channels = channels;
       this.manifestFile = manifestFile;
    }
 
@@ -82,9 +80,5 @@ public class Manifest {
          }
       }
       return null;
-   }
-
-   public Map<String, String> getChannels() {
-      return channels;
    }
 }

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import com.redhat.prospero.api.Artifact;
 import com.redhat.prospero.api.ArtifactNotFoundException;
+import com.redhat.prospero.api.Channel;
 import com.redhat.prospero.api.Gav;
 import com.redhat.prospero.api.ArtifactDependencies;
 import com.redhat.prospero.api.Manifest;
@@ -61,9 +62,9 @@ public class Update {
       }
 
 //      Repository repository = new LocalRepository(Paths.get(repo));
-      Repository repository = new MavenRepository("dev", "http://localhost:8081/repository/dev");
       LocalInstallation localInstallation = new LocalInstallation(Paths.get(base));
-      localInstallation.getManifest().getChannels();
+      MavenRepository repository = new MavenRepository(localInstallation.getChannels());
+
       if (artifact == null) {
          new Update(repository, localInstallation).doUpdateAll();
       } else {
