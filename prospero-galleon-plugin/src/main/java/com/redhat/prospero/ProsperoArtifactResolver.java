@@ -168,24 +168,27 @@ public class ProsperoArtifactResolver {
    }
 
    public boolean isStream(MavenArtifact mavenArtifact) {
-      final String artifactStreamId = mavenArtifact.getGroupId() + ":" + mavenArtifact.getArtifactId();
-      return artifactStreams.containsKey(artifactStreamId);
+//      final String artifactStreamId = mavenArtifact.getGroupId() + ":" + mavenArtifact.getArtifactId();
+//      return artifactStreams.containsKey(artifactStreamId);
+      return true;
    }
 
    private String doGetHighestVersion(MavenArtifact mavenArtifact, String lowestQualifier, Pattern includeVersion, Pattern excludeVersion) throws MavenUniverseException {
       final String artifactStreamId = mavenArtifact.getGroupId() + ":" + mavenArtifact.getArtifactId();
-      if (artifactStreams.containsKey(artifactStreamId)) {
-         final MavenArtifact streamDef = MavenArtifact.fromString(artifactStreams.get(artifactStreamId));
+//      if (artifactStreams.containsKey(artifactStreamId)) {
+//         final MavenArtifact streamDef = MavenArtifact.fromString(artifactStreams.get(artifactStreamId));
+         final MavenArtifact streamDef = MavenArtifact.fromString(artifactStreamId + ":[" + mavenArtifact.getVersion() + ",)");
          final VersionRangeResult rangeResult = getVersionRange(new DefaultArtifact(streamDef.getGroupId(), streamDef.getArtifactId(), streamDef.getExtension(), streamDef.getVersionRange()));
          final MavenArtifactVersion latest = rangeResult == null ? null : MavenArtifactVersion.getLatest(rangeResult.getVersions(), lowestQualifier, includeVersion, excludeVersion);
          if (latest == null) {
-            throw new MavenLatestVersionNotAvailableException(MavenErrors.failedToResolveLatestVersion(mavenArtifact.getCoordsAsString()));
+//            throw new MavenLatestVersionNotAvailableException(MavenErrors.failedToResolveLatestVersion(mavenArtifact.getCoordsAsString()));
+            return mavenArtifact.getVersion();
          }
          System.out.println(streamDef.toString() + " == " + latest);
          return latest.toString();
-      } else {
-         return mavenArtifact.getVersion();
-      }
+//      } else {
+//         return mavenArtifact.getVersion();
+//      }
    }
 
    private VersionRangeResult getVersionRange(Artifact artifact) throws MavenUniverseException {
