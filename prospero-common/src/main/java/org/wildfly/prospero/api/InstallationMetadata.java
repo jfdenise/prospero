@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import org.jboss.galleon.util.IoUtils;
 
 public class InstallationMetadata implements AutoCloseable {
 
@@ -219,6 +220,10 @@ public class InstallationMetadata implements AutoCloseable {
     }
 
     public void recordProvision(boolean overrideProsperoConfig) throws MetadataException {
+        recordProvision(overrideProsperoConfig, true);
+    }
+
+    public void recordProvision(boolean overrideProsperoConfig, boolean gitRecord) throws MetadataException {
         try {
             ManifestYamlSupport.write(this.manifest, this.manifestFile);
         } catch (IOException e) {
@@ -228,8 +233,9 @@ public class InstallationMetadata implements AutoCloseable {
         if (overrideProsperoConfig || !Files.exists(this.prosperoConfigFile)) {
             writeProsperoConfig();
         }
-
-        gitStorage.record();
+        if (gitRecord) {
+            gitStorage.record();
+        }
     }
 
     private void writeProsperoConfig() throws MetadataException {
