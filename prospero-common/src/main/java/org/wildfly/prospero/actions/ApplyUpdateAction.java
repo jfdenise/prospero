@@ -86,7 +86,7 @@ public class ApplyUpdateAction implements AutoCloseable {
             LOGGER.debug("System paths " + this.systemPaths.getPaths());
         }
         galleonEnv = GalleonEnvironment
-                .builder(installationDir, prosperoConfig, mavenSessionManager)
+                .builder(installationDir, prosperoConfig.getChannels(), mavenSessionManager)
                 .setConsole(console)
                 .build();
     }
@@ -113,7 +113,7 @@ public class ApplyUpdateAction implements AutoCloseable {
     private ProsperoConfig addTemporaryRepositories(List<Repository> repositories) {
         final ProsperoConfig prosperoConfig = installationMetadata.getProsperoConfig();
 
-        final List<Channel> channels = TemporaryRepositoriesHandler.addRepositories(prosperoConfig.getChannels(), repositories);
+        final List<Channel> channels = TemporaryRepositoriesHandler.overrideRepositories(prosperoConfig.getChannels(), repositories);
 
         return new ProsperoConfig(channels);
     }
