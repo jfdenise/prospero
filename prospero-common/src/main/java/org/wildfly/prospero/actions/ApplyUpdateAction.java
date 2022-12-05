@@ -189,6 +189,10 @@ public class ApplyUpdateAction implements AutoCloseable {
                     if (p.getName(0).toString().equals(ProsperoMetadataUtils.METADATA_DIR)) {
                         continue;
                     }
+                    // In case the update has been generated inside the server installation
+                    if (added.getPath().toAbsolutePath().equals(updateDir.toAbsolutePath())) {
+                        continue;
+                    }
                 }
                 addFsEntry(updateDir, added, systemPaths);
             }
@@ -258,9 +262,11 @@ public class ApplyUpdateAction implements AutoCloseable {
                             if (systemPaths.isSystemPath(Paths.get(installation.getRelativePath()))) {
                                 LOGGER.info(formatMessage(FORCED, installation.getRelativePath(), HAS_CHANGED_IN_THE_UPDATED_VERSION));
                                 glold(installation.getPath(), file);
+                                System.out.println("CREATING GLOLD!!!!");
                             } else {
                                 LOGGER.info(formatMessage(CONFLICT, installation.getRelativePath(), HAS_CHANGED_IN_THE_UPDATED_VERSION));
                                 glnew(file, installationFile);
+                                 System.out.println("CREATING GLNEW!!!!");
                             }
                         }
                     }
