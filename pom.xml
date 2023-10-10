@@ -50,7 +50,7 @@
         <version.org.codehaus.plexus-interpolation>1.26</version.org.codehaus.plexus-interpolation>
         <version.org.codehaus.plexus-utils>3.5.0</version.org.codehaus.plexus-utils>
         <version.org.jboss.staxmapper>1.4.0.Final</version.org.jboss.staxmapper>
-        <version.org.jboss.galleon>5.2.1.Final</version.org.jboss.galleon>
+        <version.org.jboss.galleon>6.0.0.Alpha1-SNAPSHOT</version.org.jboss.galleon>
         <version.org.eclipse.jgit>6.7.0.202309050840-r</version.org.eclipse.jgit>
         <version.com.fasterxml.jackson>2.15.2</version.com.fasterxml.jackson>
         <version.org.jboss.logmanager>2.1.19.Final</version.org.jboss.logmanager>
@@ -59,7 +59,7 @@
         <version.org.jboss.modules>2.1.0.Final</version.org.jboss.modules>
         <version.org.jboss.xnio>3.8.10.Final</version.org.jboss.xnio>
         <version.org.wildfly.common>1.6.0.Final</version.org.wildfly.common>
-        <version.org.wildfly.galleon-plugins>6.4.8.Final</version.org.wildfly.galleon-plugins>
+        <version.org.wildfly.galleon-plugins>7.0.0.Alpha1-SNAPSHOT</version.org.wildfly.galleon-plugins>
         <version.org.wildfly.installation-manager>1.0.2.Final</version.org.wildfly.installation-manager>
         <version.org.wildfly.maven.plugins.licenses-plugin>2.3.1.Final</version.org.wildfly.maven.plugins.licenses-plugin>
         <version.org.mockito>5.3.0</version.org.mockito>
@@ -259,7 +259,16 @@
                 <artifactId>galleon-core</artifactId>
                 <version>${version.org.jboss.galleon}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.jboss.galleon</groupId>
+                <artifactId>galleon-api</artifactId>
+                <version>${version.org.jboss.galleon}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.galleon</groupId>
+                <artifactId>galleon-common-api</artifactId>
+                <version>${version.org.jboss.galleon}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jboss.galleon</groupId>
                 <artifactId>galleon-maven-universe</artifactId>

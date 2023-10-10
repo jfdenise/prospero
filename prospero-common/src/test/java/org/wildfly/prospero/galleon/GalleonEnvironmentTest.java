@@ -50,7 +50,7 @@ public class GalleonEnvironmentTest {
                 .setManifestUrl(manifest.toURI().toURL())
                 .build();
         assertThrows(ChannelDefinitionException.class, ()->
-            GalleonEnvironment.builder(temp.newFolder().toPath(), List.of(build), msm).build());
+            GalleonEnvironment.builder(temp.newFolder().toPath(), List.of(build), msm, true).build());
     }
 
 }

@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.galleon</groupId>
-            <artifactId>galleon-core</artifactId>
+            <artifactId>galleon-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>

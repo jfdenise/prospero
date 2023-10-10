@@ -19,8 +19,6 @@ package org.wildfly.prospero.actions;
 
 import org.jboss.galleon.Constants;
 import org.jboss.galleon.ProvisioningException;
-import org.jboss.galleon.ProvisioningManager;
-import org.jboss.galleon.config.ProvisioningConfig;
 import org.wildfly.channel.Channel;
 import org.wildfly.channel.ChannelManifest;
 import org.wildfly.channel.UnresolvedMavenArtifactException;
@@ -43,6 +41,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import org.jboss.galleon.api.Provisioning;
+import org.jboss.galleon.api.config.GalleonProvisioningConfig;
 
 class PrepareCandidateAction implements AutoCloseable{
 
@@ -58,7 +58,7 @@ class PrepareCandidateAction implements AutoCloseable{
     }
 
     boolean buildCandidate(Path targetDir, GalleonEnvironment galleonEnv, ApplyCandidateAction.Type operation,
-                           ProvisioningConfig config) throws ProvisioningException, OperationException {
+                           GalleonProvisioningConfig config) throws ProvisioningException, OperationException {
         doBuildUpdate(targetDir, galleonEnv, config);
 
         try {
@@ -71,9 +71,9 @@ class PrepareCandidateAction implements AutoCloseable{
         return true;
     }
 
-    private void doBuildUpdate(Path targetDir, GalleonEnvironment galleonEnv, ProvisioningConfig provisioningConfig)
+    private void doBuildUpdate(Path targetDir, GalleonEnvironment galleonEnv, GalleonProvisioningConfig provisioningConfig)
             throws ProvisioningException, OperationException {
-        final ProvisioningManager provMgr = galleonEnv.getProvisioningManager();
+        final Provisioning provMgr = galleonEnv.getProvisioning();
         try {
             GalleonUtils.executeGalleon((options) -> {
                         options.put(Constants.EXPORT_SYSTEM_PATHS, "true");

@@ -36,9 +36,8 @@ import java.util.stream.Collectors;
 
 import org.eclipse.aether.artifact.Artifact;
 import org.jboss.galleon.Constants;
-import org.jboss.galleon.Errors;
+import org.jboss.galleon.BaseErrors;
 
-import org.jboss.galleon.ProvisioningManager;
 import org.wildfly.prospero.ProsperoLogger;
 import org.wildfly.prospero.api.ArtifactChange;
 import org.wildfly.prospero.api.FileConflict;
@@ -321,10 +320,9 @@ public class ApplyCandidateAction {
                 .setNoLocalCache(true)
                 .build();
         try (GalleonEnvironment galleonEnv = GalleonEnvironment.builder(installationDir, Collections.emptyList(),
-                        new MavenSessionManager(mavenOptions))
+                        new MavenSessionManager(mavenOptions), true)
                 .build()) {
-            ProvisioningManager provisioningManager = galleonEnv.getProvisioningManager();
-            return provisioningManager.getFsDiff();
+            return galleonEnv.getProvisioning().getFsDiff();
         }
 
     }
@@ -448,7 +446,7 @@ public class ApplyCandidateAction {
             try {
                 targetHash = HashUtils.hashPath(target);
             } catch (IOException e) {
-                throw new ProvisioningException(Errors.hashCalculation(target), e);
+                throw new ProvisioningException(BaseErrors.hashCalculation(target), e);
             }
 
             if (Arrays.equals(added.getHash(), targetHash)) {
@@ -488,7 +486,7 @@ public class ApplyCandidateAction {
                     try {
                         updateHash = HashUtils.hashPath(file);
                     } catch (IOException e) {
-                        throw new ProvisioningException(Errors.hashCalculation(file), e);
+                        throw new ProvisioningException(BaseErrors.hashCalculation(file), e);
                     }
                     Path installationFile = installationDir.resolve(modified[1].getRelativePath());
                     // Case where the modified file is equal to the hash of the update. Do nothing
